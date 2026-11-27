@@ -1,4 +1,8 @@
 import java.util.ArrayList;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.Map;
+import java.util.LinkedHashMap;
 
 public class ExpenseManager implements Reportable {
     private ArrayList<Expense> expenses = new ArrayList<>();
@@ -48,6 +52,29 @@ public class ExpenseManager implements Reportable {
 
     @Override
     public void exportCSV() {
-        // الطالبة الثانية اكتبي كود التصدير هنا
+Map<String, Double> totals = new LinkedHashMap<>();
+
+for (Expense e : expenses) {
+    String category = e.getCategory();
+    double amount = e.getAmount();
+
+    totals.put(category,
+            totals.getOrDefault(category, 0.0) + amount);
+}
+
+try (FileWriter writer = new FileWriter("expenses.csv")) {
+
+    writer.write("Category,Amount\n");
+
+    for (Map.Entry<String, Double> entry : totals.entrySet()) {
+        writer.write(entry.getKey() + ","
+                + entry.getValue() + "\n");
+    }
+
+    System.out.println("CSV report exported successfully!");
+
+} catch (IOException | SecurityException e) {
+    System.out.println("Error exporting CSV file!");
+}   
     }
 }
